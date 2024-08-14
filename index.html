@@ -3,46 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Form Submission</title>
+    <title>Mobile-Friendly PDF Viewer</title>
     <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
         #pdf-container {
             width: 100%;
-            height: 700px;
+            height: 100vh; /* Full viewport height */
             overflow: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         canvas {
             width: 100%;
-        }
-        .container {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .submit-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .submit-button:hover {
-            background-color: #45a049;
+            height: auto; /* Maintain aspect ratio */
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Gate 2025</h1>
-        <div id="pdf-container"></div>
-        <br>
-        <button class="submit-button" onclick="submitForm()">Submit</button>
-    </div>
-<iframe src="2.%20GATE%20Physical%20Sciences%20Paper%202015.pdf" width="100%" height="700px">
-    Your browser does not support iframes.
-</iframe>
+    <div id="pdf-container"></div>
+
     <!-- Load PDF.js as an ES module -->
     <script type="module">
-        import { getDocument } from './pdfjs/pdf.mjs';
+        import { getDocument, GlobalWorkerOptions } from './pdfjs/pdf.mjs';
+
+        GlobalWorkerOptions.workerSrc = './pdfjs/pdf.worker.mjs';
 
         function renderPDF() {
             var url = '2.%20GATE%20Physical%20Sciences%20Paper%202015.pdf';
@@ -54,7 +42,7 @@
                 pdf.getPage(pageNumber).then(function(page) {
                     console.log('Page loaded');
 
-                    var scale = 1.5;
+                    var scale = 1.0; // Adjust scale for mobile
                     var viewport = page.getViewport({ scale: scale });
 
                     var canvas = document.createElement('canvas');
@@ -80,26 +68,6 @@
         window.onload = function() {
             renderPDF();
         };
-
-        function submitForm() {
-            var email = prompt("Please enter your email:");
-            var name = prompt("Please enter your name:");
-            var encryptedScore = prompt("Please enter your encrypted score:");
-
-            var url = "https://script.google.com/macros/s/AKfycbyCRYM8mnQR1Gn5S9aqNvzlVTtvtJwfhbVoAaU3Zua0rrrkclM8h8EE-KFFKS9oCPp3nQ/exec";
-            var data = "?email=" + encodeURIComponent(email) + "&name=" + encodeURIComponent(name) + "&score=" + encodeURIComponent(encryptedScore);
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", url + data, true);
-            xhr.onload = function () {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    alert("Form submitted successfully!");
-                } else {
-                    alert("Form submission failed.");
-                }
-            };
-            xhr.send();
-        }
     </script>
 </body>
 </html>
