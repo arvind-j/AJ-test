@@ -11,33 +11,45 @@
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
+            justify-content: center;
         }
         #pdf-canvas {
             border: 1px solid black;
+            max-width: 100%;
+        }
+        .controls {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
 <canvas id="pdf-canvas"></canvas>
+<div class="controls">
+    <button id="prev-page">Previous</button>
+    <button id="next-page">Next</button>
+    <span id="page-info">Page 1</span>
+</div>
 
 <script>
-    const url = './2. GATE Physical Sciences Paper 2015.pdf'; // Pointing to the PDF file in the same repository
+    const url = './filename.pdf'; // Ensure this points to the correct PDF file
 
     const pdfjsLib = window['pdfjs-dist/build/pdf'];
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
 
-    const loadingTask = pdfjsLib.getDocument(url);
-    loadingTask.promise.then(pdf => {
-        pdf.getPage(1).then(page => {
+    let pdfDoc = null;
+    let pageNum = 1;
+    const canvas = document.getElementById('pdf-canvas');
+    const context = canvas.getContext('2d');
+
+    function renderPage(num) {
+        pdfDoc.getPage(num).then(page => {
             const scale = 1.5;
             const viewport = page.getViewport({ scale: scale });
 
-            const canvas = document.getElementById('pdf-canvas');
-            const context = canvas.getContext('2d');
             canvas.height = viewport.height;
             canvas.width = viewport.width;
 
@@ -46,9 +58,36 @@
                 viewport: viewport
             };
             page.render(renderContext);
+            
+            document.getElementById('page-info').textContent = `Page ${num}`;
         });
-    }, reason => {
-        console.error(reason);
+    }
+
+    function queueRenderPage(num) {
+        if (pdfDoc) {
+            renderPage(num);
+        }
+    }
+
+    document.getElementById('prev-page').addEventListener('click', () => {
+        if (pdfDoc && pageNum > 1) {
+            pageNum--;
+            queueRenderPage(pageNum);
+        }
+    });
+
+    document.getElementById('next-page').addEventListener('click', () => {
+        if (pdfDoc && pageNum < pdfDoc.numPages) {
+            pageNum++;
+            queueRenderPage(pageNum);
+        }
+    });
+
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+        pdfDoc = pdf;
+        renderPage(pageNum);
+    }).catch(error => {
+        console.error('Error loading PDF:', error);
     });
 </script>
 
