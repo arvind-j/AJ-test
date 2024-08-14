@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Form Submission</title>
+    <style>
+        iframe {
+            width: 100%;
+            height: 700px;
+            border: none;
+        }
+        .container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .submit-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gate 2025</h1>
+        <!-- Embed the PDF from Google Drive -->
+        <iframe src="C:\Users\bdosi\Desktop\2. GATE Physical Sciences Paper 2015.pdf" id="pdf-frame"></iframe>
+        <br>
+        <button class="submit-button" onclick="submitForm()">Submit</button>
+    </div>
+
+    <script>
+        function submitForm() {
+            // Collecting data from the user
+            var email = prompt("Please enter your email:");
+            var name = prompt("Please enter your name:");
+            var encryptedScore = prompt("Please enter your encrypted score:");
+
+            // Encode the data for URL
+            var url = "https://script.google.com/macros/s/AKfycbyCRYM8mnQR1Gn5S9aqNvzlVTtvtJwfhbVoAaU3Zua0rrrkclM8h8EE-KFFKS9oCPp3nQ/exec"; // Replace with your Google Apps Script URL
+            var data = "?email=" + encodeURIComponent(email) + "&name=" + encodeURIComponent(name) + "&score=" + encodeURIComponent(encryptedScore);
+
+            // Submit data using a GET request
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url + data, true);
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    alert("Form submitted successfully!");
+                } else {
+                    alert("Form submission failed.");
+                }
+            };
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
