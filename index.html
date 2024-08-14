@@ -1,73 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile-Friendly PDF Viewer</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        #pdf-container {
-            width: 100%;
-            height: 100vh; /* Full viewport height */
-            overflow: auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        canvas {
-            width: 100%;
-            height: auto; /* Maintain aspect ratio */
-        }
-    </style>
+    <title>PDF in HTML</title>
 </head>
+<style>
+    .pdf {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+    }
+
+    .pdf,
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1,
+    h3 {
+        text-align: center;
+    }
+
+    h1 {
+        color: green;
+    }
+</style>
+
 <body>
-    <div id="pdf-container"></div>
 
-    <!-- Load PDF.js as an ES module -->
-    <script type="module">
-        import { getDocument, GlobalWorkerOptions } from './pdfjs/pdf.mjs';
-
-        GlobalWorkerOptions.workerSrc = './pdfjs/pdf.worker.mjs';
-
-        function renderPDF() {
-            var url = '2.%20GATE%20Physical%20Sciences%20Paper%202015.pdf';
-            var loadingTask = getDocument(url);
-            loadingTask.promise.then(function(pdf) {
-                console.log('PDF loaded');
-
-                var pageNumber = 1;
-                pdf.getPage(pageNumber).then(function(page) {
-                    console.log('Page loaded');
-
-                    var scale = 1.0; // Adjust scale for mobile
-                    var viewport = page.getViewport({ scale: scale });
-
-                    var canvas = document.createElement('canvas');
-                    var context = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-
-                    var renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
-                    var renderTask = page.render(renderContext);
-                    renderTask.promise.then(function () {
-                        console.log('Page rendered');
-                        document.getElementById('pdf-container').appendChild(canvas);
-                    });
-                });
-            }, function (reason) {
-                console.error(reason);
-            });
-        }
-
-        window.onload = function() {
-            renderPDF();
-        };
-    </script>
+    <h1>GeeksforGeeks</h1>
+    <h3>Embedding the PDF file Using Object Tag</h3>
+    <object class="pdf" 
+            data=
+"https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf"
+            width="800"
+            height="500">
+    </object>
 </body>
+
 </html>
