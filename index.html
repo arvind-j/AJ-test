@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Form Submission</title>
     <style>
-        iframe {
+        #pdf-container {
             width: 100%;
             height: 700px;
-            border: none;
+            overflow: auto;
+        }
+        canvas {
+            width: 100%;
         }
         .container {
             text-align: center;
@@ -26,27 +29,55 @@
             background-color: #45a049;
         }
     </style>
+    <script src="pdfjs/pdf.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Gate 2025</h1>
-        <!-- Embed the PDF from Google Drive -->
-        <iframe src="https://drive.google.com/file/d/1ot8lDWR3HJ8RQqThQtI6AWvSdX5x37m3/preview" id="pdf-frame"></iframe>
-        //https://drive.google.com/file/d/1ot8lDWR3HJ8RQqThQtI6AWvSdX5x37m3/view?usp=drive_link
+        <div id="pdf-container"></div>
         <br>
         <button class="submit-button" onclick="submitForm()">Submit</button>
     </div>
 
     <script>
-        function isMobile() {
-            return /Mobi|Android/i.test(navigator.userAgent);
+        function renderPDF() {
+            var url = '2.%20GATE%20Physical%20Sciences%20Paper%202015.pdf';
+            var pdfjsLib = window['pdfjs-dist/build/pdf'];
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs/pdf.worker.js';
+
+            var loadingTask = pdfjsLib.getDocument(url);
+            loadingTask.promise.then(function(pdf) {
+                console.log('PDF loaded');
+
+                var pageNumber = 1;
+                pdf.getPage(pageNumber).then(function(page) {
+                    console.log('Page loaded');
+
+                    var scale = 1.5;
+                    var viewport = page.getViewport({scale: scale});
+
+                    var canvas = document.createElement('canvas');
+                    var context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    var renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    var renderTask = page.render(renderContext);
+                    renderTask.promise.then(function () {
+                        console.log('Page rendered');
+                        document.getElementById('pdf-container').appendChild(canvas);
+                    });
+                });
+            }, function (reason) {
+                console.error(reason);
+            });
         }
 
         window.onload = function() {
-            if (isMobile()) {
-                document.getElementById('pdf-frame').style.display = 'none';
-                document.querySelector('.container').innerHTML += '<p>The PDF is not viewable on mobile. Please download it <a href="2. GATE Physical Sciences Paper 2015.pdf">here</a>.</p>';
-            }
+            renderPDF();
         };
 
         function submitForm() {
