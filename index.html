@@ -29,7 +29,6 @@
             background-color: #45a049;
         }
     </style>
-    <script src="pdfjs/pdf.js"></script>
 </head>
 <body>
     <div class="container">
@@ -39,13 +38,13 @@
         <button class="submit-button" onclick="submitForm()">Submit</button>
     </div>
 
-    <script>
+    <!-- Load PDF.js as an ES module -->
+    <script type="module">
+        import { getDocument } from './pdfjs/pdf.mjs';
+
         function renderPDF() {
             var url = '2.%20GATE%20Physical%20Sciences%20Paper%202015.pdf';
-            var pdfjsLib = window['pdfjs-dist/build/pdf'];
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdfjs/pdf.worker.js';
-
-            var loadingTask = pdfjsLib.getDocument(url);
+            var loadingTask = getDocument(url);
             loadingTask.promise.then(function(pdf) {
                 console.log('PDF loaded');
 
@@ -54,7 +53,7 @@
                     console.log('Page loaded');
 
                     var scale = 1.5;
-                    var viewport = page.getViewport({scale: scale});
+                    var viewport = page.getViewport({ scale: scale });
 
                     var canvas = document.createElement('canvas');
                     var context = canvas.getContext('2d');
