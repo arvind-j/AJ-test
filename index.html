@@ -1,46 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF.js Test</title>
-    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <title>PSPDFKit Integration</title>
+    <link rel="stylesheet" href="https://unpkg.com/pspdfkit@latest/dist/pspdfkit.css">
+    <style>
+        #pspdfkit-container {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="the-canvas"></canvas>
-
-    <script>
-        var url = '/2. GATE Physical Sciences Paper 2015.pdf'; // Ensure this path is correct and accessible.
-
-        var loadingTask = pdfjsLib.getDocument(url);
-        loadingTask.promise.then(function(pdf) {
-            console.log('PDF loaded');
-
-            // Fetch the first page
-            var pageNumber = 1;
-            pdf.getPage(pageNumber).then(function(page) {
-                console.log('Page loaded');
-
-                var scale = 1.5;
-                var viewport = page.getViewport({scale: scale});
-
-                // Prepare canvas using PDF page dimensions
-                var canvas = document.getElementById('the-canvas');
-                var context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                // Render PDF page into canvas context
-                var renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                page.render(renderContext).promise.then(function () {
-                    console.log('Page rendered');
-                });
-            });
-        }, function (reason) {
-            console.error(reason);
-        });
-    </script>
+    <div id="pspdfkit-container"></div>
+    <script src="https://unpkg.com/pspdfkit@latest/dist/pspdfkit.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
