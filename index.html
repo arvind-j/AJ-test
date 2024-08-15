@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSPDFKit Integration</title>
+    <title>PSPDFKit Test</title>
     <link rel="stylesheet" href="https://unpkg.com/pspdfkit@latest/dist/pspdfkit.css">
     <style>
         #pspdfkit-container {
@@ -15,6 +15,16 @@
 <body>
     <div id="pspdfkit-container"></div>
     <script src="https://unpkg.com/pspdfkit@latest/dist/pspdfkit.js"></script>
-    <script src="app.js"></script>
+    <script>
+        PSPDFKit.load({
+            container: "#pspdfkit-container",
+            document: "https://pdftron.s3.amazonaws.com/downloads/pls/sample.pdf", // Example PDF URL
+            licenseKey: "a2aEEILlQe9hWrkYkFNRWdCH9zqtvACiOuGNdDDbDIkeguclLlPqbRUkIM8e5Us_cyskT6MnnmFc7zmY8W7kBGtpgqd9xL1Fyfmo7AweYc_pNvZ-1T_IGRjvA2193Bu4v5XqIncsBXJtztUrlm4gx4JC6TPT7JscuYF6zsTJOfAALJRsTZLOR0cGE4XlzXB_Kl4m_IMLQjjOpnXg_Q" // Replace with your license key
+        }).then(function (instance) {
+            console.log("PSPDFKit loaded", instance);
+        }).catch(function (error) {
+            console.error("Error loading PSPDFKit:", error);
+        });
+    </script>
 </body>
 </html>
